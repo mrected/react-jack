@@ -8,11 +8,11 @@ class App extends Component {
     super(props)
 
     this.state = {
+      gameResults: 'Test Your Skills',
+      playing: true,
       deck_id: '',
       player: [],
-      dealer: [],
-      gameResults: 'Test Your Skills!',
-      playing: true
+      dealer: []
     }
   }
 
@@ -29,19 +29,27 @@ class App extends Component {
   }
 
   componentDidUpdate = () => {
-    if (this.totalHand('player') > 21 && this.state.playing) {
+    if (!this.state.playing) {
+      return
+    }
+
+    if (this.totalHand('player') > 21) {
       this.setState({
-        gameResults: 'Player Busted',
+        gameResults: 'Player Busted!',
         playing: false
       })
     }
-    console.log('UPDATED')
   }
 
-  dealCards = (numberOfCards, whichHand) => {
+  dealCards = async (numberOfCards, whichHand) => {
+    // Don't allow cards to be dealt in a game that is over
+    if (!this.state.playing) {
+      return
+    }
+
     // put the axios request to get this number of cards
     // and add to the players hand
-    axios
+    await axios
       .get(
         `https://deckofcardsapi.com/api/deck/${
           this.state.deck_id
@@ -73,6 +81,12 @@ class App extends Component {
 
   hit = event => {
     this.dealCards(1, 'player')
+  }
+
+  stay = async event => {
+    while (this.totalHand('dealer') < 17) {
+      await this.dealCards(1, 'dealer')
+    }
   }
 
   totalHand = whichHand => {
@@ -107,6 +121,12 @@ class App extends Component {
     return total
   }
 
+  buttonClass = () => {
+    if (!this.state.playing) {
+      return 'hidden'
+    }
+  }
+
   render() {
     return (
       <>
@@ -120,7 +140,7 @@ class App extends Component {
 
         <div className="play-area">
           <div className="left">
-            <button className="hit" onClick={this.hit}>
+            <button className={`hit ${this.buttonClass()}`} onClick={this.hit}>
               Hit
             </button>
             <p>Your Cards:</p>
@@ -131,7 +151,12 @@ class App extends Component {
           </div>
 
           <div className="right">
-            <button className="stay">Stay</button>
+            <button
+              onClick={this.stay}
+              className={`stay ${this.buttonClass()}`}
+            >
+              Stay
+            </button>
             <p>Dealer Cards:</p>
             <p className="dealer-total">Facedown</p>
             <div className="dealer-hand">
