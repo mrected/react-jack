@@ -1,28 +1,89 @@
-import React, { Component } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from 'react'
+import axios from 'axios'
+import update from 'immutability-helper'
 
 class App extends Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      deck_id: '',
+      player: []
+    }
+  }
+
+  whenNewDeckIsShuffled = () => {
+    // this will happen after state is updated
+    axios
+      .get(
+        `https://deckofcardsapi.com/api/deck/${
+          this.state.deck_id
+        }/draw/?count=2`
+      )
+      .then(response => {
+        const newState = {
+          player: update(this.state.player, { $push: response.data.cards })
+        }
+        this.setState(newState)
+      })
+  }
+
+  componentDidMount = () => {
+    axios
+      .get('https://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1')
+      .then(response => {
+        const newState = {
+          deck_id: response.data.deck_id
+        }
+
+        this.setState(newState, this.whenNewDeckIsShuffled)
+      })
+  }
+
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    );
+      <>
+        <h1>Blackjack</h1>
+        <div className="center">
+          <p className="game-results">Test Your Skills!</p>
+        </div>
+        <div className="center">
+          <button className="reset hidden">Play Again!</button>
+        </div>
+
+        <div className="play-area">
+          <div className="left">
+            <button className="hit">Hit</button>
+            <p>Your Cards:</p>
+            <p className="player-total">Total 0</p>
+            <div className="player-hand">
+              {this.state.player.map((card, index) => {
+                return <img key={index} src={card.image} alt={card.code} />
+              })}
+            </div>
+          </div>
+
+          <div className="right">
+            <button className="stay">Stay</button>
+            <p>Dealer Cards:</p>
+            <p className="dealer-total">Facedown</p>
+            <div className="dealer-hand">
+              <img
+                className="cardback-one"
+                alt="card"
+                src="./images/card back red.png"
+              />
+              <img
+                className="cardback-two"
+                alt="card"
+                src="./images/card back red.png"
+              />
+            </div>
+          </div>
+        </div>
+      </>
+    )
   }
 }
 
-export default App;
+export default App
