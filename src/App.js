@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import axios from 'axios'
 import update from 'immutability-helper'
+import Hand from './Hand'
 
 class App extends Component {
   constructor(props) {
@@ -8,7 +9,8 @@ class App extends Component {
 
     this.state = {
       deck_id: '',
-      player: []
+      player: [],
+      dealer: []
     }
   }
 
@@ -23,6 +25,19 @@ class App extends Component {
       .then(response => {
         const newState = {
           player: update(this.state.player, { $push: response.data.cards })
+        }
+        this.setState(newState)
+      })
+
+    axios
+      .get(
+        `https://deckofcardsapi.com/api/deck/${
+          this.state.deck_id
+        }/draw/?count=2`
+      )
+      .then(response => {
+        const newState = {
+          dealer: update(this.state.dealer, { $push: response.data.cards })
         }
         this.setState(newState)
       })
@@ -57,9 +72,7 @@ class App extends Component {
             <p>Your Cards:</p>
             <p className="player-total">Total 0</p>
             <div className="player-hand">
-              {this.state.player.map((card, index) => {
-                return <img key={index} src={card.image} alt={card.code} />
-              })}
+              <Hand cards={this.state.player} />
             </div>
           </div>
 
@@ -67,17 +80,8 @@ class App extends Component {
             <button className="stay">Stay</button>
             <p>Dealer Cards:</p>
             <p className="dealer-total">Facedown</p>
-            <div className="dealer-hand">
-              <img
-                className="cardback-one"
-                alt="card"
-                src="./images/card back red.png"
-              />
-              <img
-                className="cardback-two"
-                alt="card"
-                src="./images/card back red.png"
-              />
+            <div className="player-hand">
+              <Hand cards={this.state.dealer} />
             </div>
           </div>
         </div>
