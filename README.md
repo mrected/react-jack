@@ -4,6 +4,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 This project was to take an existing project, blackjack built in javscript, and build it in react
 Uses api to build deck and handle game functionality
+<a href="vague-yarn.surge.sh">Click here for working version</a>
 <p align="center">
 <img src="https://res.cloudinary.com/christerrazas-info/image/upload/v1544384011/blackJackAnimation.gif" alt="react-jack" />
 </p>
