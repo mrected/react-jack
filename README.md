@@ -5,6 +5,8 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 This project was to take an existing project, blackjack built in javscript, and build it in react
 Uses api to build deck and handle game functionality
 
+Uses some of the rules of blackjack, only aces are always 11, there's no splitting, and no betting. So it's sort of blackjack. 
+
 <p><strong>Uses:</strong></p>
 <ul>
   <li>HTML 5</li>
