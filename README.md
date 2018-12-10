@@ -1,5 +1,3 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
 ## React-jack (Blackjack built in React.js)
 
 This project was to take an existing project, blackjack built in javscript, and build it in react
